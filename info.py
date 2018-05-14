@@ -34,4 +34,8 @@ for c in exports:
         print(f'  {c.name}:'.ljust(20), f'{sig.params} -> {sig.result}')
     else:
         print(f'  {c.kind} "{c.name}"')
+
     
+# Export it yto textual form
+with open('rocket.wat', 'wt') as f:
+    f.write(wasm_module.to_string())
