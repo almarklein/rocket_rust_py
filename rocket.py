@@ -17,6 +17,10 @@ from ppci.binutils.outstream import TextOutputStream
 
 ## Canvas
 
+# todo: this part is silly. We need a Qt widget, or maybe tk? Anyway, something to draw to and capture keyboards input.
+
+# todo: ha! we could run this in prompt_toolkit :P
+
 class Canvas:
     
     def __init__(self, wasm_api):
@@ -42,7 +46,7 @@ def cos(a):  # [(0, 'f64')] -> ['f64']
     return Math.cos(a)
 
 def Math_atan(a):  # [(0, 'f64')] -> ['f64']
-    return math.atan(a)  # todo: atan2?
+    return math.atan(a)
 
 def clear_screen():  # [] -> []
     print('clearing screen')
@@ -54,10 +58,10 @@ def draw_enemy(x, y):  # [(0, 'f64'), (1, 'f64')] -> []
     print(f'There is an enemy at {x}, {y}')
 
 def draw_particle(x, y, a): # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
-    print(f'There is a partical at {x}, {y}')
+    print(f'There is a partical at {x}, {y} angle {a}')
 
 def draw_player(x, y, a):  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
-    print(f'The player is at {x}, {y}')
+    print(f'The player is at {x}, {y} angle {a}')
 
 def draw_score(score):  #  env.draw_score:    [(0, 'f64')] -> []
     print(f'The score is {score}!')
@@ -92,9 +96,11 @@ f = io.StringIO()
 txt_stream = TextOutputStream(f=f, add_binary=True)
 obj = ir_to_object([ppci_module], arch, debug=True, outstream=txt_stream)
 
-
-## Run 
+# Load the native module in this process, with the provided imports
 native_module = load_obj(obj, imports=imports)
+
+
+## Run it in our app wrapper
 
 canvas = Canvas(native_module.exports)
 canvas.run()
