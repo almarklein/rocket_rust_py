@@ -9,11 +9,17 @@ to run it visually, and also feed in user interaction.
 """
 
 import math
+import logging
+import io
 
 from ppci import wasm
-from ppci.api import ir_to_object, get_current_arch
+from ppci.irutils import verify_module
+from ppci.api import ir_to_object, get_current_arch, ir_to_python
 from ppci.binutils.outstream import TextOutputStream
+from ppci.utils.reporting import HtmlReportGenerator
 
+# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 ## Canvas
 
@@ -87,20 +93,29 @@ wasm_data = open('rocket.wasm', 'rb').read()
 wasm_module = wasm.Module(wasm_data)
 
 # WASM to PPCI
-ppci_module = wasm.wasm_to_ir(wasm_module)
-# ppci_module.display()
+with open('report.html', 'w') as rfh, HtmlReportGenerator(rfh) as reporter:
+    ppci_module = wasm.wasm_to_ir(wasm_module)
+    reporter.message(ppci_module.stats())
+    reporter.dump_ir(ppci_module)
+    verify_module(ppci_module)
+    # ppci_module.display()
 
-# PPCI to native
-arch = get_current_arch()
-f = io.StringIO()
-txt_stream = TextOutputStream(f=f, add_binary=True)
-obj = ir_to_object([ppci_module], arch, debug=True, outstream=txt_stream)
+    # PPCI to native
+    arch = get_current_arch()
+    f = io.StringIO()
+    txt_stream = TextOutputStream(f=f, add_binary=True)
+    # obj = ir_to_object([ppci_module], arch, debug=True, outstream=txt_stream, reporter=reporter)
+
+    with open('gen_rocket_wasm.py', 'w') as f:
+        ir_to_python([ppci_module], f, reporter=reporter)
 
 # Load the native module in this process, with the provided imports
-native_module = load_obj(obj, imports=imports)
+# native_module = load_obj(obj, imports=imports)
+# import rocket_wasm
+# rocket_wasm.update(1)
 
 
 ## Run it in our app wrapper
 
-canvas = Canvas(native_module.exports)
-canvas.run()
+# canvas = Canvas(native_module.exports)
+# canvas.run()
