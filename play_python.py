@@ -29,6 +29,24 @@ def grow_memory(delta):
 
 rt['grow_memory'] = grow_memory
 
+def get_str(ptr):
+    """ Get a 0 terminated string """
+    data = []
+    while True:
+        b = gen_rocket_wasm.read_mem(ptr, 1)[0]
+        if b == 0:
+            break
+        else:
+            data.append(b)
+        ptr += 1
+    return bytes(data).decode('ascii')
+
+def trace_func(ptr):
+    # Lookup name:
+    print('Trace function entrance:', get_str(ptr))
+
+rt['trace'] = trace_func
+
 print(rt)
 import gen_rocket_wasm
 
@@ -47,7 +65,7 @@ wasm_mem0 = gen_rocket_wasm.wasm_mem0_address
 gen_rocket_wasm.store_i32(mem0_start, wasm_mem0)
 
 # rocket_wasm.func_pointers[]
-gen_rocket_wasm.wasm_start()
+gen_rocket_wasm._run_init()
 
 gen_rocket_wasm.draw()
 

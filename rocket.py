@@ -14,9 +14,11 @@ import io
 
 from ppci import wasm
 from ppci.irutils import verify_module
+from ppci.arch.arch_info import TypeInfo
 from ppci.api import ir_to_object, get_current_arch, ir_to_python
 from ppci.binutils.outstream import TextOutputStream
 from ppci.utils.reporting import HtmlReportGenerator
+from ppci.instrument import add_tracer
 
 # logging.basicConfig(level=logging.DEBUG)
 logging.basicConfig(level=logging.INFO)
@@ -94,9 +96,12 @@ wasm_module = wasm.Module(wasm_data)
 
 # WASM to PPCI
 with open('report.html', 'w') as rfh, HtmlReportGenerator(rfh) as reporter:
-    ppci_module = wasm.wasm_to_ir(wasm_module)
+    ptr_info = TypeInfo(4, 4)
+    ppci_module = wasm.wasm_to_ir(wasm_module, ptr_info, reporter=reporter)
     reporter.message(ppci_module.stats())
     reporter.dump_ir(ppci_module)
+    verify_module(ppci_module)
+    add_tracer(ppci_module)
     verify_module(ppci_module)
     # ppci_module.display()
 
