@@ -11,14 +11,11 @@ to run it visually, and also feed in user interaction.
 import math
 import logging
 import io
+import os
 
 from ppci import wasm
-from ppci.irutils import verify_module
-from ppci.arch.arch_info import TypeInfo
-from ppci.api import ir_to_object, get_current_arch, ir_to_python
-from ppci.binutils.outstream import TextOutputStream
+from ppci.wasm.instantiate import instantiate, create_runtime
 from ppci.utils.reporting import HtmlReportGenerator
-from ppci.instrument import add_tracer
 
 # logging.basicConfig(level=logging.DEBUG)
 logging.basicConfig(level=logging.INFO)
@@ -48,10 +45,10 @@ class Canvas:
 ## Imports
 
 def sin(a):  # [(0, 'f64')] -> ['f64'] 
-    return Math.sin(a)
+    return math.sin(a)
 
 def cos(a):  # [(0, 'f64')] -> ['f64']
-    return Math.cos(a)
+    return math.cos(a)
 
 def Math_atan(a):  # [(0, 'f64')] -> ['f64']
     return math.atan(a)
@@ -76,15 +73,18 @@ def draw_score(score):  #  env.draw_score:    [(0, 'f64')] -> []
 
 
 imports = {
-    'sin': sin,
-    'cos': cos,
-    'Math_atan': Math_atan,
-    'clear_screen': clear_screen,
-    'draw_bullet': draw_bullet,
-    'draw_enemy': draw_enemy,
-    'draw_particle': draw_particle,
-    'draw_player': draw_player,
-    'draw_score': draw_score,
+    'env': {
+        'sin': sin,
+        'cos': cos,
+        'Math_atan': Math_atan,
+        'clear_screen': clear_screen,
+        'draw_bullet': draw_bullet,
+        'draw_enemy': draw_enemy,
+        'draw_particle': draw_particle,
+        'draw_player': draw_player,
+        'draw_score': draw_score,
+    },
+    'wasm_rt': create_runtime(),
 }
 
 
@@ -93,26 +93,12 @@ imports = {
 # Load WASM module
 wasm_data = open('rocket.wasm', 'rb').read()
 wasm_module = wasm.Module(wasm_data)
-
-# WASM to PPCI
-with open('report.html', 'w') as rfh, HtmlReportGenerator(rfh) as reporter:
-    ptr_info = TypeInfo(4, 4)
-    ppci_module = wasm.wasm_to_ir(wasm_module, ptr_info, reporter=reporter)
-    reporter.message(ppci_module.stats())
-    reporter.dump_ir(ppci_module)
-    verify_module(ppci_module)
-    add_tracer(ppci_module)
-    verify_module(ppci_module)
-    # ppci_module.display()
-
-    # PPCI to native
-    arch = get_current_arch()
-    f = io.StringIO()
-    txt_stream = TextOutputStream(f=f, add_binary=True)
-    # obj = ir_to_object([ppci_module], arch, debug=True, outstream=txt_stream, reporter=reporter)
-
-    with open('gen_rocket_wasm.py', 'w') as f:
-        ir_to_python([ppci_module], f, reporter=reporter)
+with open('report2.html', 'w') as rfh, HtmlReportGenerator(rfh) as reporter:
+    instance = instantiate(wasm_module, imports, target='python', reporter=reporter)
+print(instance)
+for _ in range(5):
+    instance.exports.update(0.1)
+    instance.exports.draw()
 
 # Load the native module in this process, with the provided imports
 # native_module = load_obj(obj, imports=imports)
