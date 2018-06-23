@@ -29,7 +29,7 @@ print('\nExports:')
 for c in exports:
     #  c.show()
     if c.kind == 'func':
-        func = functions[c.ref.index]
+        func = functions[c.ref.index - functions[0].id]
         sig = types[func.ref.index]
         print(f'  {c.name}:'.ljust(20), f'{sig.params} -> {sig.result}')
     else:
