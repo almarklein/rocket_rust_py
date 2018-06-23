@@ -10,117 +10,84 @@ to run it visually, and also feed in user interaction.
 
 import math
 import logging
+import time
 import io
+import os
 
 from ppci import wasm
-from ppci.irutils import verify_module
-from ppci.arch.arch_info import TypeInfo
-from ppci.api import ir_to_object, get_current_arch, ir_to_python
-from ppci.binutils.outstream import TextOutputStream
+from ppci.wasm.instantiate import instantiate, create_runtime
 from ppci.utils.reporting import HtmlReportGenerator
-from ppci.instrument import add_tracer
 
 # logging.basicConfig(level=logging.DEBUG)
 logging.basicConfig(level=logging.INFO)
 
-## Canvas
-
-# todo: this part is silly. We need a Qt widget, or maybe tk? Anyway, something to draw to and capture keyboards input.
-
-# todo: ha! we could run this in prompt_toolkit :P
-
-class Canvas:
-    
-    def __init__(self, wasm_api):
-        self.wasm_api = wasm_api
-        
-        self.wasm_api.resize(100, 100)
-    
-    def run(self):
-        while True:
-            
-            time.sleep(0.5)
-            
-            self.wasm_api.update()
-            self.wasm_api.draw()
-
-
-## Imports
-
-def sin(a):  # [(0, 'f64')] -> ['f64'] 
-    return Math.sin(a)
-
-def cos(a):  # [(0, 'f64')] -> ['f64']
-    return Math.cos(a)
-
-def Math_atan(a):  # [(0, 'f64')] -> ['f64']
-    return math.atan(a)
-
-def clear_screen():  # [] -> []
-    print('clearing screen')
-
-def draw_bullet(x, y):  # [(0, 'f64'), (1, 'f64')] -> []
-    print(f'There is a bullet at {x}, {y}')
-
-def draw_enemy(x, y):  # [(0, 'f64'), (1, 'f64')] -> []
-    print(f'There is an enemy at {x}, {y}')
-
-def draw_particle(x, y, a): # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
-    print(f'There is a partical at {x}, {y} angle {a}')
-
-def draw_player(x, y, a):  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
-    print(f'The player is at {x}, {y} angle {a}')
-
-def draw_score(score):  #  env.draw_score:    [(0, 'f64')] -> []
-    print(f'The score is {score}!')
-
-
-imports = {
-    'sin': sin,
-    'cos': cos,
-    'Math_atan': Math_atan,
-    'clear_screen': clear_screen,
-    'draw_bullet': draw_bullet,
-    'draw_enemy': draw_enemy,
-    'draw_particle': draw_particle,
-    'draw_player': draw_player,
-    'draw_score': draw_score,
-}
-
-
-## Compose
-
-# Load WASM module
-wasm_data = open('rocket.wasm', 'rb').read()
+# Load the wasm module
+filename = os.path.join(os.path.dirname(__file__), 'rocket.wasm')
+wasm_data = open(filename, 'rb').read()
 wasm_module = wasm.Module(wasm_data)
 
-# WASM to PPCI
-with open('report.html', 'w') as rfh, HtmlReportGenerator(rfh) as reporter:
-    ptr_info = TypeInfo(4, 4)
-    ppci_module = wasm.wasm_to_ir(wasm_module, ptr_info, reporter=reporter)
-    reporter.message(ppci_module.stats())
-    reporter.dump_ir(ppci_module)
-    verify_module(ppci_module)
-    add_tracer(ppci_module)
-    verify_module(ppci_module)
-    # ppci_module.display()
 
-    # PPCI to native
-    arch = get_current_arch()
-    f = io.StringIO()
-    txt_stream = TextOutputStream(f=f, add_binary=True)
-    # obj = ir_to_object([ppci_module], arch, debug=True, outstream=txt_stream, reporter=reporter)
+class BaseRocketGame:
+    """ Simple rocket game, text based, without user input.
+    """
+    
+    def __init__(self):
+        self._instantiate()
+    
+    def _instantiate(self):
+        """ Instantiate the wasm module, using the objects' methods as imports.
+        """
+        env = {}
+        for name in dir(self):
+            if name.startswith('wasm_'):
+                env[name[5:]] = getattr(self, name)
+        imports = dict(env=env, wasm_rt=create_runtime())
+        
+        self.wam = instantiate(wasm_module, imports, target='python')
+    
+    def run(self):
+        """ Enter the game's main loop.
+        """
+        self.wam.exports.resize(100, 100)
+        while True:
+            time.sleep(0.5)
+            self.wam.exports.update(0.1)
+            self.wam.exports.draw()
+            
+            # We never call these ...
+            # self.wam.exports.toggle_shoot(b)
+            # self.wam.exports.toggle_turn_left(b)
+            # self.wam.exports.toggle_turn_right(b)
+            # self.wam.exports.toggle_boost(b)
+    
+    def wasm_sin(self, a):  # [(0, 'f64')] -> ['f64'] 
+        return math.sin(a)
+    
+    def wasm_cos(self, a):  # [(0, 'f64')] -> ['f64']
+        return math.cos(a)
+    
+    def wasm_Math_atan(self, a):  # [(0, 'f64')] -> ['f64']
+        return math.atan(a)
+    
+    def wasm_clear_screen(self):  # [] -> []
+        print('clearing screen')
+    
+    def wasm_draw_bullet(self, x, y):  # [(0, 'f64'), (1, 'f64')] -> []
+        print(f'There is a bullet at {x}, {y}')
+    
+    def wasm_draw_enemy(self, x, y):  # [(0, 'f64'), (1, 'f64')] -> []
+        print(f'There is an enemy at {x}, {y}')
+    
+    def wasm_draw_particle(self, x, y, a): # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+        print(f'There is a particle at {x}, {y} angle {a}')
+    
+    def wasm_draw_player(self, x, y, a):  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+        print(f'The player is at {x}, {y} angle {a}')
+    
+    def wasm_draw_score(self, score):  #  env.draw_score:    [(0, 'f64')] -> []
+        print(f'The score is {score}!')
 
-    with open('gen_rocket_wasm.py', 'w') as f:
-        ir_to_python([ppci_module], f, reporter=reporter)
 
-# Load the native module in this process, with the provided imports
-# native_module = load_obj(obj, imports=imports)
-# import rocket_wasm
-# rocket_wasm.update(1)
-
-
-## Run it in our app wrapper
-
-# canvas = Canvas(native_module.exports)
-# canvas.run()
+if __name__ == '__main__':
+    game = BaseRocketGame()
+    game.run()

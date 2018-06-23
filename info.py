@@ -22,15 +22,15 @@ print('\nImports:')
 for c in imports:
     #  c.show()
     assert c.kind == 'func'  # we assume only func imports
-    sig = types[c.info[0]]
+    sig = types[c.info[0].index]
     print(f'  {c.modname}.{c.name}:'.ljust(20), f'{sig.params} -> {sig.result}')
 
 print('\nExports:')
 for c in exports:
     #  c.show()
     if c.kind == 'func':
-        func = functions[c.ref]
-        sig = types[func.ref]
+        func = functions[c.ref.index]
+        sig = types[func.ref.index]
         print(f'  {c.name}:'.ljust(20), f'{sig.params} -> {sig.result}')
     else:
         print(f'  {c.kind} "{c.name}"')
