@@ -94,5 +94,6 @@ class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
 
 
 if __name__ == '__main__':
+    app = QtWidgets.QApplication([])
     game = QtRocketGame()
     game.run()
