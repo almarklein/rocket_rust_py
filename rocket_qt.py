@@ -19,7 +19,6 @@ class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
         self.setWindowTitle("Rocket, written in Rust, compiled to WASM, running in Python, with Qt")
         self.resize(640, 480)
         
-        self.wasm_clear_screen()
         self._lasttime = time.time()
         self._highscore = 0
     
