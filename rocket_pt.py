@@ -128,23 +128,23 @@ class PtRocketGame(BaseRocketGame):
         y = max(0, min(int(y / self._size_scale + 0.5), self._size[1]))
         return x, y
     
-    def wasm_draw_bullet(self, x, y):  # [(0, 'f64'), (1, 'f64')] -> []
+    def wasm_draw_bullet(self, x: float, y: float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         x, y = self._round_pos(x, y)
         self._lines[y][x] = 'bullet', '*'
     
-    def wasm_draw_enemy(self, x, y):  # [(0, 'f64'), (1, 'f64')] -> []
+    def wasm_draw_enemy(self, x: float, y: float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         x, y = self._round_pos(x, y)
         self._lines[y][x] = 'enemy', 'O'
 
-    def wasm_draw_particle(self, x, y, a): # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+    def wasm_draw_particle(self, x: float, y: float, a: float) -> None: # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         x, y = self._round_pos(x, y)
         self._lines[y][x] = 'particle', '.'
     
-    def wasm_draw_player(self, x, y, a):  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+    def wasm_draw_player(self, x: float, y: float, a: float) -> None:  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         x, y = self._round_pos(x, y)
         self._lines[y][x] = 'player', 'X'
     
-    def wasm_draw_score(self, score):  #  env.draw_score:    [(0, 'f64')] -> []
+    def wasm_draw_score(self, score: float) -> None:  #  env.draw_score:    [(0, 'f64')] -> []
         score = int(score)
         self._highscore = max(self._highscore, score)
         text = f'Score: {score}, HighScore: {self._highscore}'
