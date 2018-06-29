@@ -43,7 +43,7 @@ class BaseRocketGame:
                 env[name[5:]] = getattr(self, name)
         imports = dict(env=env, wasm_rt=create_runtime())
         
-        self.wam = instantiate(wasm_module, imports, target='python')
+        self.wam = instantiate(wasm_module, imports, target='native')
     
     def run(self):
         """ Enter the game's main loop.
@@ -60,31 +60,31 @@ class BaseRocketGame:
             # self.wam.exports.toggle_turn_right(b)
             # self.wam.exports.toggle_boost(b)
     
-    def wasm_sin(self, a):  # [(0, 'f64')] -> ['f64'] 
+    def wasm_sin(self, a:float) -> float:  # [(0, 'f64')] -> ['f64'] 
         return math.sin(a)
     
-    def wasm_cos(self, a):  # [(0, 'f64')] -> ['f64']
+    def wasm_cos(self, a:float) -> float:  # [(0, 'f64')] -> ['f64']
         return math.cos(a)
     
-    def wasm_Math_atan(self, a):  # [(0, 'f64')] -> ['f64']
+    def wasm_Math_atan(self, a:float) -> float:  # [(0, 'f64')] -> ['f64']
         return math.atan(a)
     
-    def wasm_clear_screen(self):  # [] -> []
+    def wasm_clear_screen(self) -> None:  # [] -> []
         print('clearing screen')
     
-    def wasm_draw_bullet(self, x, y):  # [(0, 'f64'), (1, 'f64')] -> []
+    def wasm_draw_bullet(self, x:float, y:float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         print(f'There is a bullet at {x}, {y}')
     
-    def wasm_draw_enemy(self, x, y):  # [(0, 'f64'), (1, 'f64')] -> []
+    def wasm_draw_enemy(self, x:float, y:float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         print(f'There is an enemy at {x}, {y}')
     
-    def wasm_draw_particle(self, x, y, a): # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+    def wasm_draw_particle(self, x:float, y:float, a:float) -> None: # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         print(f'There is a particle at {x}, {y} angle {a}')
     
-    def wasm_draw_player(self, x, y, a):  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+    def wasm_draw_player(self, x:float, y:float, a:float) -> None:  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         print(f'The player is at {x}, {y} angle {a}')
     
-    def wasm_draw_score(self, score):  #  env.draw_score:    [(0, 'f64')] -> []
+    def wasm_draw_score(self, score:float) -> None:  #  env.draw_score:    [(0, 'f64')] -> []
         print(f'The score is {score}!')
 
 
