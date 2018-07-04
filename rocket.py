@@ -15,7 +15,7 @@ import io
 import os
 
 from ppci import wasm
-from ppci.wasm.instantiate import instantiate, create_runtime
+from ppci.wasm.instantiate import instantiate
 from ppci.utils.reporting import HtmlReportGenerator
 
 # logging.basicConfig(level=logging.DEBUG)
@@ -41,7 +41,7 @@ class BaseRocketGame:
         for name in dir(self):
             if name.startswith('wasm_'):
                 env[name[5:]] = getattr(self, name)
-        imports = dict(env=env, wasm_rt=create_runtime())
+        imports = dict(env=env)
         
         self.wam = instantiate(wasm_module, imports, target='native')
     

@@ -18,7 +18,7 @@ from ppci.wasm.instantiate import instantiate, create_runtime
 from ppci.utils.reporting import HtmlReportGenerator
 
 # logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 ## Canvas
 
