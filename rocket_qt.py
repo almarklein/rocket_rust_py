@@ -73,11 +73,11 @@ class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
         self._painter.setBrush(QtGui.QColor('#ff0'))
         self._painter.drawEllipse(x, y, 14, 14)
     
-    def wasm_draw_particle(self, x: float, y: float, a) -> None: # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+    def wasm_draw_particle(self, x: float, y: float, a: float) -> None: # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         self._painter.setBrush(QtGui.QColor('#f04'))
         self._painter.drawEllipse(x, y, 2, 2)
     
-    def wasm_draw_player(self, x: float, y: float, a) -> None:  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
+    def wasm_draw_player(self, x: float, y: float, a: float) -> None:  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         p = QtGui.QPainterPath()
         self._painter.save()
         self._painter.translate(x, y)

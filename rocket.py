@@ -18,8 +18,8 @@ from ppci import wasm
 from ppci.wasm.instantiate import instantiate
 from ppci.utils.reporting import HtmlReportGenerator
 
-# logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.INFO)
 
 # Load the wasm module
 filename = os.path.join(os.path.dirname(__file__), 'rocket.wasm')
