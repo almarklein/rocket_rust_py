@@ -70,7 +70,7 @@ class PtRocketGame(BaseRocketGame):
         # Resize?
         if (w, h) != self._size:
             self._size = w, h
-            self.wam.exports.resize(w*self._size_scale, h*self._size_scale)
+            self.game.exports.resize(w*self._size_scale, h*self._size_scale)
         
         # Init lines
         lines = [] 
@@ -81,8 +81,8 @@ class PtRocketGame(BaseRocketGame):
         # Update and draw
         progress = time.time() - self._lasttime
         self._lasttime = time.time()
-        self.wam.exports.update(progress)
-        self.wam.exports.draw()
+        self.game.exports.update(progress)
+        self.game.exports.draw()
         
         self._release_keys()
         self._app.invalidate()  # Request a new paint event (also see app.min_redraw_interval)
@@ -108,13 +108,13 @@ class PtRocketGame(BaseRocketGame):
     
     def _toggle_key(self, key, b):
         if key in (' ', 'space'):
-            self.wam.exports.toggle_shoot(b)
+            self.game.exports.toggle_shoot(b)
         elif key == 'left':
-            self.wam.exports.toggle_turn_left(b)
+            self.game.exports.toggle_turn_left(b)
         elif key == 'right':
-            self.wam.exports.toggle_turn_right(b)
+            self.game.exports.toggle_turn_right(b)
         elif key == 'up':
-            self.wam.exports.toggle_boost(b)
+            self.game.exports.toggle_boost(b)
         elif key in ('q', 'escape'):
             self._app.exit()
     

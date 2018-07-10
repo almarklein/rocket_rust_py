@@ -1,3 +1,6 @@
+"""
+You should probably just ignore this ...
+"""
 
 import struct
 from ppci.wasm.wasm2ppci import create_memories
