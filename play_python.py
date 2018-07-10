@@ -4,8 +4,8 @@ You should probably just ignore this ...
 
 import struct
 from ppci.wasm.wasm2ppci import create_memories
-from ppci.wasm.instantiate import create_runtime
-from ppci.wasm import Module
+from ppci.wasm.runtime import create_runtime
+from ppci.wasm import 
 
 wasm_data = open('rocket.wasm', 'rb').read()
 wasm_module = Module(wasm_data)

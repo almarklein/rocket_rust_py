@@ -18,7 +18,7 @@ class AiRocketGame(QtRocketGame):
     
     def __init__(self, ai_module=ai_module1):
         super().__init__()
-        self.ai = wasm.instantiate.instantiate(ai_module, self.imports, target='python')
+        self.ai = wasm.instantiate(ai_module, self.imports, target='python')
     
     def paintEvent(self, event):
         super().paintEvent(event)

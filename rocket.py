@@ -15,7 +15,6 @@ import io
 import os
 
 from ppci import wasm
-import ppci.wasm.instantiate
 from ppci.utils.reporting import HtmlReportGenerator
 
 logging.basicConfig(level=logging.DEBUG)
@@ -40,7 +39,7 @@ class BaseRocketGame:
         self.imports = dict(env=env)
         
         # Instantiate game module
-        self.game = wasm.instantiate.instantiate(game_module, self.imports, target='python')
+        self.game = wasm.instantiate(game_module, self.imports, target='python')
     
     def run(self):
         """ Enter the game's main loop.
