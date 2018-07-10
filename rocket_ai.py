@@ -13,7 +13,8 @@ ai_data2 = open(filename2, 'rt').read()
 ai_module2 = wasm.Module(ai_data2)
 
 
-class QtRocketGameWithAI(QtRocketGame):
+
+class AiRocketGame(QtRocketGame):
     
     def __init__(self, ai_module=ai_module1):
         super().__init__()
@@ -53,5 +54,5 @@ class QtRocketGameWithAI(QtRocketGame):
 
 
 if __name__ == '__main__':
-    game = QtRocketGameWithAI(ai_module1)
+    game = AiRocketGame(ai_module1)
     game.run()
