@@ -17,8 +17,8 @@ import os
 from ppci import wasm
 from ppci.utils.reporting import HtmlReportGenerator
 
-logging.basicConfig(level=logging.DEBUG)
-# logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.DEBUG)  # this produces so much output that it slows things down a lot
+logging.basicConfig(level=logging.WARN)
 
 # Load the wasm module
 filename = os.path.join(os.path.dirname(__file__), 'wasm', 'rocket.wasm')
