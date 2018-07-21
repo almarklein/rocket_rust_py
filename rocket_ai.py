@@ -4,12 +4,12 @@ from ppci import wasm
 from rocket_qt import QtRocketGame
 
 # Load the wasm ai modules
-filename1 = os.path.join(os.path.dirname(__file__), 'wasm', 'ai1.wasm')
-ai_data1 = open(filename1, 'rb').read()
+filename1 = os.path.join(os.path.dirname(__file__), 'wasm', 'ai1.wat')
+ai_data1 = open(filename1, 'rt').read()
 ai_module1 = wasm.Module(ai_data1)
 #
-filename2 = os.path.join(os.path.dirname(__file__), 'wasm', 'ai2.wat')
-ai_data2 = open(filename2, 'rt').read()
+filename2 = os.path.join(os.path.dirname(__file__), 'wasm', 'ai2.wasm')
+ai_data2 = open(filename2, 'rb').read()
 ai_module2 = wasm.Module(ai_data2)
 
 
@@ -17,7 +17,7 @@ class AiRocketGame(QtRocketGame):
     
     def __init__(self, ai_module=ai_module1):
         super().__init__()
-        self.ai = wasm.instantiate(ai_module, self.imports, target='python')
+        self.ai = wasm.instantiate(ai_module, self.imports, target='native')
     
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -53,5 +53,5 @@ class AiRocketGame(QtRocketGame):
 
 
 if __name__ == '__main__':
-    game = AiRocketGame(ai_module1)
+    game = AiRocketGame(ai_module2)
     game.run()
