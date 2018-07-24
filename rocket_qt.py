@@ -8,6 +8,8 @@ from qtpy import QtWidgets, QtCore, QtGui
 
 from rocket import BaseRocketGame
 
+REL_SIZE = 2.5
+
 
 class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
     """ Rocket game with Qt providing a drawing canvas and user input.
@@ -19,7 +21,7 @@ class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self, None)
         BaseRocketGame.__init__(self)
         self.setWindowTitle("Rocket, written in Rust, compiled to WASM, running in Python, with Qt")
-        self.resize(640, 480)
+        self.resize(900, 700)
         
         self._lasttime = time.time()
         self._highscore = 0
@@ -69,15 +71,15 @@ class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
     
     def wasm_draw_bullet(self, x: float, y: float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         self._painter.setBrush(QtGui.QColor('#0f0'))
-        self._painter.drawEllipse(x, y, 3, 3)
+        self._painter.drawEllipse(x, y, REL_SIZE*3, REL_SIZE*3)
     
     def wasm_draw_enemy(self, x: float, y: float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         self._painter.setBrush(QtGui.QColor('#ff0'))
-        self._painter.drawEllipse(x, y, 14, 14)
+        self._painter.drawEllipse(x, y, REL_SIZE*14, REL_SIZE*14)
     
     def wasm_draw_particle(self, x: float, y: float, a: float) -> None: # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         self._painter.setBrush(QtGui.QColor('#f04'))
-        self._painter.drawEllipse(x, y, 2, 2)
+        self._painter.drawEllipse(x, y, REL_SIZE, REL_SIZE)
     
     def wasm_draw_player(self, x: float, y: float, a: float) -> None:  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         p = QtGui.QPainterPath()
@@ -85,7 +87,10 @@ class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
         self._painter.translate(x, y)
         self._painter.rotate(a*180/math.pi-90)
         self._painter.translate(-x, -y)
-        p.moveTo(x, y + 12); p.lineTo(x - 6, y - 6); p.lineTo(x + 6, y - 6); p.lineTo(x, y + 12)
+        p.moveTo(x, y + 12*REL_SIZE)
+        p.lineTo(x - 6*REL_SIZE, y - 6*REL_SIZE)
+        p.lineTo(x + 6*REL_SIZE, y - 6*REL_SIZE)
+        p.lineTo(x, y + 12*REL_SIZE)
         self._painter.fillPath(p, QtGui.QBrush(QtGui.QColor("#00f")))
         self._painter.restore()
     
