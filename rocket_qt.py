@@ -5,6 +5,7 @@ import time
 import math
 
 from qtpy import QtWidgets, QtCore, QtGui
+from qtpy.QtCore import QRectF
 
 from rocket import BaseRocketGame
 
@@ -71,15 +72,18 @@ class QtRocketGame(BaseRocketGame, QtWidgets.QWidget):
     
     def wasm_draw_bullet(self, x: float, y: float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         self._painter.setBrush(QtGui.QColor('#0f0'))
-        self._painter.drawEllipse(x, y, REL_SIZE*3, REL_SIZE*3)
+        rect = QRectF(x, y, REL_SIZE*3, REL_SIZE*3)
+        self._painter.drawEllipse(rect)
     
     def wasm_draw_enemy(self, x: float, y: float) -> None:  # [(0, 'f64'), (1, 'f64')] -> []
         self._painter.setBrush(QtGui.QColor('#ff0'))
-        self._painter.drawEllipse(x, y, REL_SIZE*14, REL_SIZE*14)
+        rect = QRectF(x, y, REL_SIZE*14, REL_SIZE*14)
+        self._painter.drawEllipse(rect)
     
     def wasm_draw_particle(self, x: float, y: float, a: float) -> None: # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         self._painter.setBrush(QtGui.QColor('#f04'))
-        self._painter.drawEllipse(x, y, REL_SIZE, REL_SIZE)
+        rect = QRectF(x, y, REL_SIZE, REL_SIZE)
+        self._painter.drawEllipse(rect)
     
     def wasm_draw_player(self, x: float, y: float, a: float) -> None:  # [(0, 'f64'), (1, 'f64'), (2, 'f64')] -> []
         p = QtGui.QPainterPath()
